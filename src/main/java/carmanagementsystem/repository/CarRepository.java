@@ -1,6 +1,6 @@
-package CarManagementSystem.Repository;
+package carmanagementsystem.repository;
 
-import CarManagementSystem.Model.Car;
+import carmanagementsystem.model.Car;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
