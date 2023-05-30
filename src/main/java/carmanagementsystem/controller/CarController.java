@@ -1,6 +1,6 @@
 package carmanagementsystem.controller;
 
-import carmanagementsystem.model.Car;
+import carmanagementsystem.CarDTO.CarDTO;
 import carmanagementsystem.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,22 +18,22 @@ public class CarController {
     }
 
     @GetMapping
-    public List<Car> getAllCars() {
+    public List<CarDTO> getAllCars() {
         return carService.getAllCars();
     }
 
     @PostMapping
-    public Car addCar(@RequestBody Car car) {
-        return carService.addCar(car);
+    public CarDTO addCar(@RequestBody CarDTO carDTO) {
+        return carService.addCar(carDTO);
     }
 
     @GetMapping("/{id}")
-    public Car getCarById(@PathVariable Long id) {
+    public CarDTO getCarById(@PathVariable Long id) {
         return carService.getCarById(id);
     }
 
     @PutMapping("/{id}")
-    public Car updateCar(@PathVariable Long id, @RequestBody Car updatedCar) {
+    public CarDTO updateCar(@PathVariable Long id, @RequestBody CarDTO updatedCar) {
         return carService.updateCar(id, updatedCar);
     }
 
@@ -42,4 +42,3 @@ public class CarController {
         carService.deleteCar(id);
     }
 }
-
