@@ -1,7 +1,8 @@
 package carmanagementsystem.controller;
 
-import carmanagementsystem.CarDTO.CarDTO;
+import carmanagementsystem.dto.CarDTO;
 import carmanagementsystem.service.CarService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,12 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public CarDTO getCarById(@PathVariable Long id) {
+    public CarDTO getCarById(@PathVariable Long id) throws NotFoundException {
         return carService.getCarById(id);
     }
 
     @PutMapping("/{id}")
-    public CarDTO updateCar(@PathVariable Long id, @RequestBody CarDTO updatedCar) {
+    public CarDTO updateCar(@PathVariable Long id, @RequestBody CarDTO updatedCar) throws NotFoundException {
         return carService.updateCar(id, updatedCar);
     }
 
@@ -42,3 +43,4 @@ public class CarController {
         carService.deleteCar(id);
     }
 }
+

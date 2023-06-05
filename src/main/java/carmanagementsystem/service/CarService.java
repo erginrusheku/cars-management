@@ -1,53 +1,71 @@
 package carmanagementsystem.service;
 
-import carmanagementsystem.CarDTO.CarDTO;
+import carmanagementsystem.dto.CarDTO;
+import carmanagementsystem.mapper.CarMapper;
 import carmanagementsystem.model.Car;
 import carmanagementsystem.repository.CarRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CarService {
     private final CarRepository carRepository;
+    private final CarMapper carMapper;
 
     @Autowired
-    public CarService(CarRepository carRepository) {
+    public CarService(CarRepository carRepository, CarMapper carMapper) {
         this.carRepository = carRepository;
+        this.carMapper = carMapper;
     }
 
     public List<CarDTO> getAllCars() {
         List<Car> cars = carRepository.findAll();
-        return cars.stream()
-                .map(Car::toDTO)
-                .collect(Collectors.toList());
+        List<CarDTO> carDTOs = new ArrayList<>();
+
+        for (Car car : cars) {
+            CarDTO carDTO = carMapper.toDto(car);
+            carDTOs.add(carDTO);
+        }
+
+        return carDTOs;
     }
+
+
 
     public CarDTO addCar(CarDTO carDTO) {
-        Car car = new Car(carDTO);
+        Car car = carMapper.toEntity(carDTO);
         Car savedCar = carRepository.save(car);
-        return savedCar.toDTO();
+        return carMapper.toDto(savedCar);
     }
 
-    public CarDTO getCarById(Long id) {
+    public CarDTO getCarById(Long id) throws NotFoundException {
         Car car = carRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + id));
-        return car.toDTO();
+                .orElseThrow(() -> new NotFoundException("Car not found"));
+        return carMapper.toDto(car);
     }
 
-    public CarDTO updateCar(Long id, CarDTO updatedCar) {
-        Car car = carRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + id));
-        car.setMake(updatedCar.getMake());
-        car.setModel(updatedCar.getModel());
-        car.setYear(updatedCar.getYear());
-        Car savedCar = carRepository.save(car);
-        return savedCar.toDTO();
+    public CarDTO updateCar(Long id, CarDTO updatedCar) throws NotFoundException {
+        Car existingCar = carRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Car not found with id: " + id));
+
+        existingCar.setMake(updatedCar.getMake());
+        existingCar.setModel(updatedCar.getModel());
+        existingCar.setYear(updatedCar.getYear());
+
+        Car savedCar = carRepository.save(existingCar);
+
+        return carMapper.toDto(savedCar);
     }
 
     public void deleteCar(Long id) {
         carRepository.deleteById(id);
     }
 }
+
+
+

@@ -1,7 +1,5 @@
 package carmanagementsystem.model;
 
-
-import carmanagementsystem.CarDTO.CarDTO;
 import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,17 +18,7 @@ public class Car {
 
     public Car() {}
 
-    public Car(CarDTO carDTO) {
-        this.id = carDTO.getId();
-        this.make = carDTO.getMake();
-        this.model = carDTO.getModel();
-        this.year = carDTO.getYear();
-    }
-
     public Car(long id, String make, String model, int year) {
     }
 
-    public CarDTO toDTO() {
-        return new CarDTO(id, make, model, year);
-    }
 }

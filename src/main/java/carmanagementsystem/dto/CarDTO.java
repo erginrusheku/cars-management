@@ -1,4 +1,4 @@
-package carmanagementsystem.CarDTO;
+package carmanagementsystem.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

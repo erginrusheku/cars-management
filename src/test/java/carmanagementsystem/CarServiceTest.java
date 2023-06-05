@@ -1,13 +1,16 @@
 package carmanagementsystem;
 
-import carmanagementsystem.CarDTO.CarDTO;
+import carmanagementsystem.dto.CarDTO;
+import carmanagementsystem.mapper.CarMapper;
 import carmanagementsystem.model.Car;
 import carmanagementsystem.repository.CarRepository;
 import carmanagementsystem.service.CarService;
+import javassist.NotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,13 +19,20 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 public class CarServiceTest {
+    @InjectMocks
+    private CarService carService;
+
     @Mock
     private CarRepository carRepository;
 
-    @InjectMocks
-    private CarService carService;
+    @Mock
+    private CarMapper carMapper;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void testGetAllCars() {
@@ -32,70 +42,71 @@ public class CarServiceTest {
         List<Car> cars = Arrays.asList(car1, car2);
 
         when(carRepository.findAll()).thenReturn(cars);
+        when(carMapper.toDto(car1)).thenReturn(new CarDTO(1L, "Toyota", "Camry", 2022));
+        when(carMapper.toDto(car2)).thenReturn(new CarDTO(2L, "Honda", "Accord", 2023));
 
         // Act
         List<CarDTO> result = carService.getAllCars();
 
         // Assert
         assertEquals(cars.size(), result.size());
-        // You can add more assertions to verify the correctness of the result
     }
+
+
+
+
+
 
     @Test
     public void testAddCar() {
         // Arrange
-        CarDTO carDTO = new CarDTO(null, "Toyota", "Camry", 2022);
-        Car savedCar = new Car(1L, "Toyota", "Camry", 2022);
+        CarDTO carDTO = new CarDTO(1L, "Toyota", "Camry", 2022);
+        Car car = new Car(1L, "Toyota", "Camry", 2022);
 
-        when(carRepository.save(any(Car.class))).thenReturn(savedCar);
+        when(carMapper.toEntity(carDTO)).thenReturn(car);
+        when(carRepository.save(car)).thenReturn(car);
+        when(carMapper.toDto(car)).thenReturn(carDTO);
 
         // Act
         CarDTO result = carService.addCar(carDTO);
 
         // Assert
-        assertEquals(savedCar.getId(), result.getId());
-        assertEquals(savedCar.getMake(), result.getMake());
-        assertEquals(savedCar.getModel(), result.getModel());
-        assertEquals(savedCar.getYear(), result.getYear());
+        assertEquals(carDTO, result);
     }
 
     @Test
-    public void testGetCarById() {
+    public void testGetCarById() throws NotFoundException {
         // Arrange
         Long carId = 1L;
         Car car = new Car(carId, "Toyota", "Camry", 2022);
+        CarDTO carDTO = new CarDTO(carId, "Toyota", "Camry", 2022);
 
-        when(carRepository.findById(carId)).thenReturn(Optional.of(car));
+        when(carRepository.findById(carId)).thenReturn(java.util.Optional.of(car));
+        when(carMapper.toDto(car)).thenReturn(carDTO);
 
         // Act
         CarDTO result = carService.getCarById(carId);
 
         // Assert
-        assertEquals(car.getId(), result.getId());
-        assertEquals(car.getMake(), result.getMake());
-        assertEquals(car.getModel(), result.getModel());
-        assertEquals(car.getYear(), result.getYear());
+        assertEquals(carDTO, result);
     }
 
     @Test
-    public void testUpdateCar() {
+    public void testUpdateCar() throws NotFoundException {
         // Arrange
         Long carId = 1L;
-        Car existingCar = new Car(carId, "Toyota", "Camry", 2022);
         CarDTO updatedCarDTO = new CarDTO(carId, "Honda", "Accord", 2023);
         Car updatedCar = new Car(carId, "Honda", "Accord", 2023);
 
-        when(carRepository.findById(carId)).thenReturn(Optional.of(existingCar));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(new Car()));
         when(carRepository.save(any(Car.class))).thenReturn(updatedCar);
+        when(carMapper.toDto(updatedCar)).thenReturn(updatedCarDTO);
 
         // Act
         CarDTO result = carService.updateCar(carId, updatedCarDTO);
 
         // Assert
-        assertEquals(updatedCar.getId(), result.getId());
-        assertEquals(updatedCar.getMake(), result.getMake());
-        assertEquals(updatedCar.getModel(), result.getModel());
-        assertEquals(updatedCar.getYear(), result.getYear());
+        assertEquals(updatedCarDTO, result);
     }
 
     @Test
@@ -110,3 +121,7 @@ public class CarServiceTest {
         verify(carRepository, times(1)).deleteById(carId);
     }
 }
+
+
+
+
