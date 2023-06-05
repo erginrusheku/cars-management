@@ -18,7 +18,6 @@ public class Car {
 
     public Car() {}
 
-    public Car(long id, String make, String model, int year) {
-    }
+    public Car(long id, String make, String model, int year) {}
 
 }

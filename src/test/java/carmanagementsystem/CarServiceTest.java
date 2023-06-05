@@ -52,11 +52,6 @@ public class CarServiceTest {
         assertEquals(cars.size(), result.size());
     }
 
-
-
-
-
-
     @Test
     public void testAddCar() {
         // Arrange
