@@ -35,8 +35,6 @@ public class CarService {
         return carDTOs;
     }
 
-
-
     public CarDTO addCar(CarDTO carDTO) {
         Car car = carMapper.toEntity(carDTO);
         Car savedCar = carRepository.save(car);
