@@ -38,12 +38,14 @@ public class CarService {
     public CarDTO addCar(CarDTO carDTO) {
         Car car = carMapper.toEntity(carDTO);
         Car savedCar = carRepository.save(car);
+
         return carMapper.toDto(savedCar);
     }
 
     public CarDTO getCarById(Long id) throws NotFoundException {
         Car car = carRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Car not found"));
+
         return carMapper.toDto(car);
     }
 
